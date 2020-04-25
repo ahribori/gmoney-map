@@ -9,7 +9,7 @@ export class Shop {
       cancelFetchShopsByBounds()
     }
     return axios.get(
-      `http://gmoneyapi.toast.paas-ta.com/api/shops/search?lat=${lat}&lon=${lng}&radius=${radius}`,
+      `https://gmoneyapi.toast.paas-ta.com/api/shops/search?lat=${lat}&lon=${lng}&radius=${radius}`,
       {
         cancelToken: new CancelToken(c => {
           cancelFetchShopsByBounds = c
