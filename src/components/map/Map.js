@@ -11,6 +11,7 @@ import { cancelFetchShopsByBounds } from "../../api/Shop"
 import IconButton from "@material-ui/core/IconButton"
 import Snackbar from "@material-ui/core/Snackbar"
 import { Close } from "@material-ui/icons"
+import ShopClusterDialog from "./ShopClusterDialog"
 
 const useStyles = makeStyles(theme => ({
   map: {
@@ -45,6 +46,7 @@ const Map = ({ serviceOpen }) => {
   const [toast, setToast] = useState(null)
   const [clusterer, setClusterer] = useState(null)
   const [fetched, setFetched] = useState(false)
+  const [clusterShops, setClusterShops] = useState(null)
   const classes = useStyles()
 
   /**
@@ -145,21 +147,15 @@ const Map = ({ serviceOpen }) => {
 
         const marker = new kakao.maps.Marker({
           title: name,
+          text: name,
           map,
           position: new kakao.maps.LatLng(lat, lon)
         })
 
-        const infowindow = new kakao.maps.InfoWindow({
-          content: '<div style="padding:5px;">' + name + "</div>"
+        kakao.maps.event.addListener(marker, "click", function() {
+          setClusterShops([shop])
         })
 
-        kakao.maps.event.addListener(marker, "mouseover", function() {
-          infowindow.open(map, marker)
-        })
-
-        kakao.maps.event.addListener(marker, "mouseout", function() {
-          infowindow.close()
-        })
         markers.push(marker)
       }
 
@@ -167,11 +163,11 @@ const Map = ({ serviceOpen }) => {
         const level = map.getLevel()
         const markers = cluster.getMarkers()
         if (level === 2 && markers) {
-          const clusterShops = markers.map(marker => {
+          const _clusterShops = markers.map(marker => {
             const name = marker.mc
             return shopsGroupByName[name]
           })
-          console.log(clusterShops)
+          setClusterShops(_clusterShops)
         }
       })
 
@@ -179,7 +175,7 @@ const Map = ({ serviceOpen }) => {
       setClusterer(_clusterer)
     },
     // eslint-disable-next-line
-    [clusterer, map]
+    [clusterShops, clusterer, map]
   )
 
   const handleSearch = searchText => {
@@ -241,9 +237,14 @@ const Map = ({ serviceOpen }) => {
       {pending && (
         <>
           <LinearProgress color="secondary" className={classes.progress} />
-          <div className={classes.dimmer}></div>
+          <div className={classes.dimmer} />
         </>
       )}
+      <ShopClusterDialog
+        handleClose={() => setClusterShops(null)}
+        open={!!clusterShops}
+        clusterShops={clusterShops}
+      />
       {info && <Info message={info} />}
       <Snackbar
         anchorOrigin={{
