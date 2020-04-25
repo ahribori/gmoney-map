@@ -12,6 +12,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Snackbar from "@material-ui/core/Snackbar"
 import { Close } from "@material-ui/icons"
 import ShopClusterDialog from "./ShopClusterDialog"
+import SearchResultDialog from "./SearchResultDialog"
 
 const useStyles = makeStyles(theme => ({
   map: {
@@ -47,6 +48,7 @@ const Map = ({ serviceOpen }) => {
   const [clusterer, setClusterer] = useState(null)
   const [fetched, setFetched] = useState(false)
   const [clusterShops, setClusterShops] = useState(null)
+  const [searchResults, setSearchResults] = useState(null)
   const classes = useStyles()
 
   /**
@@ -58,11 +60,7 @@ const Map = ({ serviceOpen }) => {
     const places = new kakao.maps.services.Places()
     places.keywordSearch(keyword, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        const firstItem = result[0]
-        const { x, y } = firstItem
-        const moveLatLng = new kakao.maps.LatLng(y, x)
-        map.panTo(moveLatLng)
-        map.setLevel(3)
+        setSearchResults(result)
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         setToast("검색 결과가 없습니다.")
       } else {
@@ -70,6 +68,15 @@ const Map = ({ serviceOpen }) => {
       }
       setPending(false)
     })
+  }
+
+  const handleClickSearchResult = item => {
+    const { x, y } = item
+    const moveLatLng = new kakao.maps.LatLng(y, x)
+    map.panTo(moveLatLng)
+    map.setLevel(3)
+    setSearchResults(null)
+    fetchShops()
   }
 
   const fetchShops = () => {
@@ -110,6 +117,9 @@ const Map = ({ serviceOpen }) => {
           console.log("getLocation", latitude, longitude)
           const moveLatLng = new kakao.maps.LatLng(latitude, longitude)
           map.panTo(moveLatLng)
+          setTimeout(() => {
+            fetchShops()
+          }, 500)
           setPending(false)
         },
         () => {
@@ -244,6 +254,12 @@ const Map = ({ serviceOpen }) => {
         handleClose={() => setClusterShops(null)}
         open={!!clusterShops}
         clusterShops={clusterShops}
+      />
+      <SearchResultDialog
+        handleClose={() => setSearchResults(null)}
+        open={!!searchResults}
+        searchResults={searchResults}
+        handleClickItem={handleClickSearchResult}
       />
       {info && <Info message={info} />}
       <Snackbar
