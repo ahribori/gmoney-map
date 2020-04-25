@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import AppBar from "../appbar/AppBar"
 import Toolbar from "./Toolbar"
@@ -120,45 +120,67 @@ const Map = ({ serviceOpen }) => {
     }
   }
 
-  const setShopOverlays = shops => {
-    if (clusterer) {
-      clusterer.clear()
-    }
-    const _clusterer = new kakao.maps.MarkerClusterer({
-      map,
-      averageCenter: true,
-      minLevel: 3
-    })
-
-    const markers = []
-
-    for (let i = 0; i < shops.length - 1; i++) {
-      const shop = shops[i]
-      const { place, coords } = shop
-      const { name } = place
-      const { lat, lon } = coords
-      const marker = new kakao.maps.Marker({
+  const setShopOverlays = useCallback(
+    shops => {
+      if (clusterer) {
+        clusterer.clear()
+      }
+      const _clusterer = new kakao.maps.MarkerClusterer({
         map,
-        position: new kakao.maps.LatLng(lat, lon)
+        averageCenter: true,
+        minLevel: 2
       })
 
-      const infowindow = new kakao.maps.InfoWindow({
-        content: '<div style="padding:5px;">' + name + "</div>"
+      const markers = []
+
+      const shopsGroupByName = {}
+
+      for (let i = 0; i < shops.length - 1; i++) {
+        const shop = shops[i]
+        const { place, coords } = shop
+        const { name } = place
+        const { lat, lon } = coords
+
+        shopsGroupByName[name] = shop
+
+        const marker = new kakao.maps.Marker({
+          title: name,
+          map,
+          position: new kakao.maps.LatLng(lat, lon)
+        })
+
+        const infowindow = new kakao.maps.InfoWindow({
+          content: '<div style="padding:5px;">' + name + "</div>"
+        })
+
+        kakao.maps.event.addListener(marker, "mouseover", function() {
+          infowindow.open(map, marker)
+        })
+
+        kakao.maps.event.addListener(marker, "mouseout", function() {
+          infowindow.close()
+        })
+        markers.push(marker)
+      }
+
+      kakao.maps.event.addListener(_clusterer, "clusterclick", cluster => {
+        const level = map.getLevel()
+        const markers = cluster.getMarkers()
+        if (level === 2 && markers) {
+          const clusterShops = markers.map(marker => {
+            const name = marker.mc
+            return shopsGroupByName[name]
+          })
+          console.log(clusterShops)
+        }
       })
 
-      kakao.maps.event.addListener(marker, "mouseover", function() {
-        infowindow.open(map, marker)
-      })
-
-      kakao.maps.event.addListener(marker, "mouseout", function() {
-        infowindow.close()
-      })
-      markers.push(marker)
-    }
-
-    _clusterer.addMarkers(markers)
-    setClusterer(_clusterer)
-  }
+      _clusterer.addMarkers(markers)
+      setClusterer(_clusterer)
+    },
+    // eslint-disable-next-line
+    [clusterer, map]
+  )
 
   const handleSearch = searchText => {
     if (searchText) {
@@ -179,6 +201,7 @@ const Map = ({ serviceOpen }) => {
     }
 
     const map = new kakao.maps.Map(container, options) //지도 생성 및 객체 리턴
+    map.setMinLevel(2)
     setMap(map)
     setPending(false)
   }, [kakao.maps])
