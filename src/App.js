@@ -4,6 +4,7 @@ import { theme } from "./theme"
 import classes from "./App.module.css"
 import Map from "./components/map"
 import Layer from "./components/layer"
+import Agreement from "./components/notice/Agreement"
 
 function App() {
   const serviceOpen = true
@@ -12,6 +13,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <div className={classes.App}>
         <Map serviceOpen={serviceOpen} />
+        <Agreement serviceOpen={serviceOpen} />
         <Layer />
       </div>
     </ThemeProvider>

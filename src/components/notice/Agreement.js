@@ -21,54 +21,36 @@ const Agreement = ({ serviceOpen }) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">서비스 이용 동의</DialogTitle>
+      <DialogTitle id="alert-dialog-title">알려드립니다</DialogTitle>
       <DialogContent>
-        {!serviceOpen && (
-          <Typography variant="body2" gutterBottom style={{ fontSize: 15, color: "red" }}>
-            * <strong>서비스 준비중입니다. (3월 11일 오전 8시 오픈예정)</strong>
-          </Typography>
-        )}
-
         <Typography variant="body2" gutterBottom style={{ fontSize: 13 }}>
-          * <strong>3월 15일까지 베타테스트 기간입니다.</strong>
+          * 경기도 지역화폐 가맹점 정보입니다. 일부 매장에서는 지류 상품권만 사용이 가능하오니 카드
+          사용은 확인 후 방문하세요. (출처 : 경기데이터드림)
         </Typography>
 
         <Typography variant="body2" gutterBottom style={{ fontSize: 13 }}>
-          * 마스크 사용 지침 및 공적 마스크 관련 안내는{" "}
-          <a
-            href="https://www.mfds.go.kr/bogunMaskPanMae.jsp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <strong>[식약처 홈페이지]</strong>
-          </a>
-          를 참고하세요.
+          * 경기도 지역화폐 가맹점이더라도 매장에서 주소정보를 입력하지 않았을 경우 지도에 나오지
+          않을 수 있으니 참고부탁드립니다.
         </Typography>
 
         <Typography variant="body2" gutterBottom style={{ fontSize: 13 }}>
-          * 마스크사자에서 제공하는 공적마스크 판매정보는 <strong>5분 이상 지연된 정보</strong>
-          입니다.
-        </Typography>
-
-        <Typography variant="body2" gutterBottom style={{ fontSize: 13 }}>
-          * 일선에서 수고하시는 약사님들께 감사의 마음을 전합니다.
-        </Typography>
-
-        <Typography variant="body2" gutterBottom style={{ fontSize: 13, color: "red" }}>
-          * 실제 약국에 있는 재고량과 오차가 발생할 수 있으니 절대로 현장에 계신 약사님들께 문제를
-          제기하지 말아주세요.
+          * 해당 지역에 매장이 너무 많은 경우 가까운 순서대로 최대 300개까지 보여주니 더 자세히 보고
+          싶으시면 지도를 확대한 뒤 "이 위치에서 가맹점 불러오기" 버튼을 다시 눌러주세요.
         </Typography>
 
         <Divider style={{ margin: "10px 0" }} />
 
         <Typography variant="body2" gutterBottom style={{ fontSize: 11 }}>
-          데이터 관련 문의: 한국정보화진흥원(
-          <a href="mailto:maskdata@nia.or.kr">maskdata@nia.or.kr</a>)
+          데이터 관련 문의: 경기데이터드림(
+          <a href="https://data.gg.go.kr/portal/mainPage.do">
+            https://data.gg.go.kr/portal/mainPage.do
+          </a>
+          )
         </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} variant={"contained"} color="primary" disabled={!serviceOpen}>
-          {serviceOpen ? "동의합니다" : "서비스 준비중"}
+          {serviceOpen ? "확인" : "서비스 준비중"}
         </Button>
       </DialogActions>
     </Dialog>
