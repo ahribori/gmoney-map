@@ -17,7 +17,8 @@ import SearchResultDialog from "./SearchResultDialog"
 const useStyles = makeStyles(theme => ({
   map: {
     width: "100%",
-    height: "100%"
+    height: "100%",
+    marginBottom: 50
   },
   progress: {
     position: "fixed",
@@ -36,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: 10,
     backgroundColor: "rgba(255,255,255,0.3)",
     pointerEvents: "none"
+  },
+  snackBar: {
+    bottom: 58
   }
 }))
 
@@ -271,6 +275,7 @@ const Map = ({ serviceOpen }) => {
         autoHideDuration={3000}
         onClose={() => setToast(null)}
         message={toast}
+        className={classes.snackBar}
         action={
           <React.Fragment>
             <IconButton
