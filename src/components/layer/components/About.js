@@ -22,7 +22,6 @@ const About = () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
-      <div>개발: 정현승</div>
       <div>문의: ahribori@gmail.com</div>
       <div>지도 및 로컬 API 지원 : kakao</div>
     </div>
